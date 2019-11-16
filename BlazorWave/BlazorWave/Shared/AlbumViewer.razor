@@ -1,0 +1,74 @@
+﻿
+<style>
+    .track-number {
+        padding-right:20px;
+    }
+
+    .album-tracks {
+        width:100%;
+        padding:60px;
+    }
+
+    .album-copyright {
+        text-align:center;
+        margin-top:40px;
+    }
+
+    .track-row {
+      display:flex;
+      justify-content:space-between;
+    }
+
+    .track-row div {
+        display:flex;
+    }
+
+    .album-info {
+        margin-bottom:25px;
+    }
+
+    .track-speed {
+        margin-right:20px;
+    }
+</style>
+
+<div>
+    <div class="album-info flex-row">
+        <img src="/images/albumart.jpg" />
+        <div>
+            <div class="media-information">
+                <h3>In Endless Light</h3>
+                <h4>Oasis Chorale</h4>
+            </div>
+            <div class="media-options">
+                <button class="ui icon button play">
+                    <i class="play icon"></i>
+                </button>
+                <button class="ui icon button play">
+                    <i class="random icon"></i>
+                </button>
+                <button class="ui icon button play">
+                    <i class="share alternate icon"></i>
+                </button>
+            </div>
+            <p style="margin-left:20px;">Released November 15, 2005. 1 Song - 1 Minute</p>
+        </div>
+    </div>
+    <div class="album-tracks">
+        <div class="track-row">
+            <div>
+                <div class="track-number">12</div>
+                <div class="track-name">Praise We Sing to Thee</div>
+            </div>
+            <div>
+                <div class="track-speed">Normal</div>
+                <div class="track-time">1:56</div>
+            </div>
+        </div>
+    </div>
+    <p class="album-copyright">©2005 Oasis Chorale</p>
+</div>
+
+@code {
+
+}

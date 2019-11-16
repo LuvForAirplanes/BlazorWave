@@ -61,7 +61,7 @@ namespace BlazorWave
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls("http://*:42895");
+                    webBuilder.UseUrls("http://*:32981");
                 });
     }
 }

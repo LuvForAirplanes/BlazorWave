@@ -1,16 +1,35 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="sidebar">
-    <NavMenu />
-</div>
+    <div class="flex-row">
+        <div class="sidebar">
+            <div class="brand">Blazor Wave</div>
+            <NavMenu />
+        </div>
+        <div class="main">
+            <div class="top-row">
+                @*<LoginDisplay />
+        <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank">About</a>*@
+                <div class="ui segment flex flex-row">
+                    <div class="media-buttons">
+                        <button class="ui icon button seek-back">
+                            <i class="fast backward icon" style="padding-right: 10px !important;"></i>
+                        </button>
+                        <button class="ui icon button play">
+                            <i class="play icon"></i>
+                        </button>
+                        <button class="ui icon button seek-front">
+                            <i class="fast forward icon"></i>
+                        </button>
+                    </div> 
+                    <div class="media-information">
+                        <h3>Praise We Sing to Thee</h3>
+                        <h4>Oasis Chorale</h4>
+                    </div>
+                </div>
+            </div>
 
-<div class="main">
-    <div class="top-row px-4">
-        <LoginDisplay />
-        <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank">About</a>
+            <div class="tab-content">
+                @Body
+            </div>
+        </div>
     </div>
-
-    <div class="content px-4">
-        @Body
-    </div>
-</div>

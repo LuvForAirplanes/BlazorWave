@@ -1,28 +1,31 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">BlazorWave</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
+﻿@*<div class="top-row pl-4 navbar navbar-dark">
+            <a class="navbar-brand" href="">BlazorWave</a>
+            <button class="navbar-toggler" @onclick="ToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    </div>*@
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </li>
-    </ul>
+<div class="ui secondary vertical inverted menu">
+    <NavLink class="item" href="nowplaying">
+        Now Playing
+    </NavLink>
+    <div class="divider"></div>
+    <NavLink class="item" href="albums">
+        Albums
+    </NavLink>
+    <NavLink class="item" href="artists">
+        Artists
+    </NavLink>
+    <NavLink class="item" href="playlists">
+        Playlists
+    </NavLink>
+    <div class="divider"></div>
+    <NavLink class="item" href="settings">
+        Settings
+    </NavLink>
+    <NavLink class="item" href="account">
+        Account
+    </NavLink>
 </div>
 
 @code {
