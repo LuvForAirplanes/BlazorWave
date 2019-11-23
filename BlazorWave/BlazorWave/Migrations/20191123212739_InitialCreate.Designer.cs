@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BlazorWave.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191114181523_InitialCreate")]
+    [Migration("20191123212739_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,175 @@ namespace BlazorWave.Migrations
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .HasAnnotation("ProductVersion", "3.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            modelBuilder.Entity("BlazorWave.Data.Models.Album", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Added")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("AlbumArtPath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Artist")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Genre")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Released")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Updated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Albums");
+                });
+
+            modelBuilder.Entity("BlazorWave.Data.Models.Playlist", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Added")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Updated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Playlists");
+                });
+
+            modelBuilder.Entity("BlazorWave.Data.Models.Track", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Added")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("AlbumId")
+                        .HasColumnType("text");
+
+                    b.Property<TimeSpan>("Length")
+                        .HasColumnType("interval");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Updated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AlbumId");
+
+                    b.ToTable("Tracks");
+                });
+
+            modelBuilder.Entity("BlazorWave.Data.Models.TrackPlaylistMap", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Added")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("PlaylistId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TrackId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Updated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaylistId");
+
+                    b.HasIndex("TrackId");
+
+                    b.ToTable("TrackPlaylistMaps");
+                });
+
+            modelBuilder.Entity("BlazorWave.Data.Models.TrackShare", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Added")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("SharerId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TrackId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Updated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SharerId");
+
+                    b.HasIndex("TrackId");
+
+                    b.ToTable("TrackShares");
+                });
+
+            modelBuilder.Entity("BlazorWave.Data.Models.UserSpeedPreference", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Added")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Speed")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TrackId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Updated")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrackId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserSpeedPreferences");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -217,6 +386,53 @@ namespace BlazorWave.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("BlazorWave.Data.Models.Album", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId");
+                });
+
+            modelBuilder.Entity("BlazorWave.Data.Models.Track", b =>
+                {
+                    b.HasOne("BlazorWave.Data.Models.Album", null)
+                        .WithMany("Tracks")
+                        .HasForeignKey("AlbumId");
+                });
+
+            modelBuilder.Entity("BlazorWave.Data.Models.TrackPlaylistMap", b =>
+                {
+                    b.HasOne("BlazorWave.Data.Models.Playlist", "Playlist")
+                        .WithMany()
+                        .HasForeignKey("PlaylistId");
+
+                    b.HasOne("BlazorWave.Data.Models.Track", "Track")
+                        .WithMany()
+                        .HasForeignKey("TrackId");
+                });
+
+            modelBuilder.Entity("BlazorWave.Data.Models.TrackShare", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Sharer")
+                        .WithMany()
+                        .HasForeignKey("SharerId");
+
+                    b.HasOne("BlazorWave.Data.Models.Track", "Track")
+                        .WithMany()
+                        .HasForeignKey("TrackId");
+                });
+
+            modelBuilder.Entity("BlazorWave.Data.Models.UserSpeedPreference", b =>
+                {
+                    b.HasOne("BlazorWave.Data.Models.Track", "Track")
+                        .WithMany()
+                        .HasForeignKey("TrackId");
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

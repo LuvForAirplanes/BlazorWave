@@ -10,6 +10,6 @@ namespace BlazorWave.Data.Models
         public string Title { get; set; }
         public int Order { get; set; }
         public TimeSpan Length { get; set; }
-        public TrackLocation Location { get; set; }
+        public string Location { get; set; }
     }
 }

@@ -1,0 +1,174 @@
+﻿@using BlazorWave.Data.Models;
+@using BlazorWave.Data.Models.DTOs;
+@using BlazorInputFile;
+@using System.IO;
+@using System.Net.Http
+@using Newtonsoft.Json;
+@inject HttpClient Http
+@inject NavigationManager navigationManager
+@inject IJSRuntime JSRuntime
+
+<style>
+    .track-number {
+        padding-right: 20px;
+    }
+
+    .album-tracks {
+        width: 100%;
+        padding: 60px;
+    }
+
+    .album-copyright {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .track-row {
+        display: flex;
+        justify-content: space-between;
+    }
+
+        .track-row div {
+            display: flex;
+        }
+
+    .album-info {
+        margin-bottom: 25px;
+    }
+
+    .track-speed {
+        margin-right: 20px;
+    }
+
+    .track-title {
+        border: 0;
+        width: 400px;
+    }
+</style>
+
+<div class="album-info">
+    <div class="ui input">
+        <input @bind="EditAlbum.Title" placeholder="Title" />
+    </div>
+    <div class="ui input">
+        <input @bind="EditAlbum.Artist" placeholder="Artist" />
+    </div>
+    <div class="ui input">
+        <input @bind="EditAlbum.Genre" placeholder="Genre" />
+    </div>
+    <div class="ui input">
+        <input @bind="EditAlbum.Released" placeholder="Released Date" />
+    </div>
+</div>
+<div>
+    <BlazorInputFile.InputFile multiple OnChange="HandleSelection" />
+    <button class="ui button" @onclick="(async => SaveUploadedFiles())">Save &Aacute; Upload</button>
+</div>
+<div>
+    <div class="album-tracks">
+        @foreach (var track in EditAlbum.Tracks)
+        {
+            <div class="track-row">
+                <div>
+                    <div class="track-number">@(track.Order + 1)</div>
+                    <div class="track-name">
+                        <input @bind="track.Title" class="track-title" />
+                    </div>
+                </div>
+                <div>
+                    <div class="track-speed">Normal</div>
+                    <div class="track-time">1:56</div>
+                    <button class="ui fluid tertiary button" @onclick="@(async () => await DeleteTrack(track.Id))" style="padding:0 !important; margin:0;">
+                        <i class="red trash alternate icon"></i>
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    public string Message { get; set; }
+    BlazorInputFile.IFileListEntry[] selectedFiles;
+
+    void HandleSelection(IFileListEntry[] files)
+    {
+        selectedFiles = files;
+
+        ParseIncomingFiles();
+    }
+
+    async Task LoadFile(IFileListEntry file)
+    {
+        // So the UI updates to show progress
+        file.OnDataRead += (sender, eventArgs) => InvokeAsync(StateHasChanged);
+
+        // Just load into .NET memory to show it can be done
+        // Alternatively it could be saved to disk, or parsed in memory, or similar
+        var ms = new MemoryStream();
+        await file.Data.CopyToAsync(ms);
+    }
+
+    void ParseIncomingFiles()
+    {
+        for (int i = 0; i < selectedFiles.Length; i++)
+        {
+            EditAlbum.Tracks.Add(new Track
+            {
+                Id = Guid.NewGuid().ToString(),
+                Added = DateTime.Now,
+                //Length = 0,
+                Order = i,
+                Title = selectedFiles[i].Name
+            });
+        }
+    }
+
+    AlbumUploadDTO transportFile = new AlbumUploadDTO();
+
+    async Task SaveUploadedFiles()
+    {
+        for (int i = 0; i < selectedFiles.Count(); i++)
+        {
+            var ms = new MemoryStream();
+            await selectedFiles[i].Data.CopyToAsync(ms);
+
+            transportFile.Tracks.Add(new TrackUploadDTO
+            {
+                Name = selectedFiles[i].Name.Replace("." + selectedFiles[i].Name.Split(".").Last(), ""),
+                Data = ms.ToArray(),
+                Order = i,
+                Extension = selectedFiles[i].Name.Split(".").Last()
+
+            });
+        }
+        
+        var image = await JSRuntime.InvokeAsync<string>("getImage");
+
+        transportFile.Artist = EditAlbum.Artist;
+        transportFile.Genre = EditAlbum.Genre;
+        transportFile.Released = EditAlbum.Released;
+        transportFile.Title = EditAlbum.Title;
+        transportFile.AlbumArtAsPng = image;
+
+        var json = JsonConvert.SerializeObject(transportFile);
+        var stringContent = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+        var response = await Http.PostAsync($"{navigationManager.BaseUri}api/upload", stringContent);
+
+        if (response.IsSuccessStatusCode)
+            navigationManager.NavigateTo("/albums/albums");
+
+        StateHasChanged();
+
+    }
+
+    async Task DeleteTrack(string id)
+    {
+        EditAlbum.Tracks.RemoveAll(t => t.Id == id);
+
+        StateHasChanged();
+    }
+
+    [Parameter]
+    public Album EditAlbum { get; set; }
+}

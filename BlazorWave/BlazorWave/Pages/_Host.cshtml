@@ -5,6 +5,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="/inputfile.js"></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blazor Wave</title>
@@ -16,6 +17,21 @@
     <link rel="stylesheet" type="text/css" href="~/css/site.css">
 </head>
 <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/2.0.0/trianglify.min.js"></script>
+    <script>
+        window.getImage = () => {
+            var pattern = Trianglify({
+                width: 100,
+                height: 100
+            });
+
+            return pattern.png();
+        }
+        window.getMicah = () => {
+            return "Micah";
+        }
+    </script>
+
     <app>
         @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
     </app>

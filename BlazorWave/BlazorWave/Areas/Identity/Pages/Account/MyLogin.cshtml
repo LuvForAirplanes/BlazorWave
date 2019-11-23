@@ -1,0 +1,16 @@
+﻿@page
+@using Microsoft.AspNetCore.Identity
+@attribute [IgnoreAntiforgeryToken]
+@inject SignInManager<IdentityUser> SignInManager
+
+@functions {
+    string Password = "Teacher4U";
+    string Username = "micah@abcrun.com";
+
+    public async Task<IActionResult> OnGetAsync()
+    {
+        var result = await SignInManager.PasswordSignInAsync(Username, Password, false, false);
+        Console.WriteLine(result.Succeeded);
+        return Page();
+    }
+}

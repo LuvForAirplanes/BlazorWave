@@ -1,0 +1,10 @@
+﻿@page "/albums/add"
+@using BlazorWave.Data.Models
+
+<h2>Add Album</h2>
+
+<AlbumEdit EditAlbum="Album"></AlbumEdit>
+
+@code {
+    public Album Album { get; set; } = new Album();
+}

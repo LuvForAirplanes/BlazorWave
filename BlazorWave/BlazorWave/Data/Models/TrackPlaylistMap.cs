@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BlazorWave.Data.Models
 {
-    public class TrackPlaylistMap
+    public class TrackPlaylistMap : BaseModel
     {
         public Playlist Playlist { get; set; }
         public string PlaylistId { get; set; }

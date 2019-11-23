@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using BlazorWave.Areas.Identity;
 using BlazorWave.Data;
 using BlazorWave.Services;
+using System.Net.Http;
 
 namespace BlazorWave
 {
@@ -40,10 +41,35 @@ namespace BlazorWave
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddRazorPages();
-            services.AddServerSideBlazor();
+                //.AddRazorPagesOptions(options =>
+                //{
+                //    options.Conventions.AuthorizePage("/albums");
+                //    options.Conventions.AuthorizePage("/playlists");
+                //    options.Conventions.AuthorizePage("/artists");
+                //    options.Conventions.AuthorizePage("/nowplaying");
+                //});
+            services.AddServerSideBlazor().AddCircuitOptions(options => options.DetailedErrors = true);
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 
             services.AddScoped<SeedDataService>();
+            services.AddScoped<AlbumsService>();
+            services.AddScoped<HttpClient>();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 4;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredUniqueChars = 0;
+
+                // Lockout settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+                options.Lockout.MaxFailedAccessAttempts = 6;
+                options.Lockout.AllowedForNewUsers = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
