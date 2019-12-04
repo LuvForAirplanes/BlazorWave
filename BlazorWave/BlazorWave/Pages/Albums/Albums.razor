@@ -8,7 +8,7 @@
     .album-box {
         width:120px;
         height:160px;
-        margin:20px;
+        margin:40px;
     }
 
     .ui.grid {
@@ -17,6 +17,19 @@
 
     h1 {
         margin-top:0;
+    }
+
+    .album-title {
+        margin-top:10px;
+        margin-bottom:6px !important;
+    }
+
+    .album-artist {
+        margin-top:0;
+    }
+
+    .album-box > img {
+        cursor: pointer;
     }
 </style>
 
@@ -27,8 +40,13 @@
     @foreach (var album in albums)
     {
         <div class="album-box">
-            <img />
-            @album.Title
+            <img src="/images/trianglify.png" @onclick="(() => SelectAlbum(album.Id))" />
+            <h3 class="album-title">
+                @album.Title
+            </h3>
+            <h4 class="album-artist">
+                @album.Artist
+            </h4>
         </div>
     }
 </div>
@@ -46,5 +64,10 @@
     void OnClick()
     {
         NavigationManager.NavigateTo("/albums/add");
+    }
+
+    void SelectAlbum(string albumId)
+    {
+        NavigationManager.NavigateTo("/nowPlaying/" + albumId);
     }
 }

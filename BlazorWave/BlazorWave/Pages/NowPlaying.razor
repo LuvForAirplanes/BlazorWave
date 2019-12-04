@@ -1,5 +1,25 @@
 ﻿@page "/nowplaying"
+@page "/nowplaying/{albumId}"
+@using BlazorWave.Data.Models;
+@inject BlazorWave.Services.AlbumsService albumsService;
+
 <AlbumViewer></AlbumViewer>
 
 @code {
+    [Parameter]
+    public Album nowPlaying { get; set; }
+
+    [Parameter]
+    public string albumId { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            nowPlaying = await albumsService.GetAlbumAsync(albumId);
+
+            StateHasChanged();
+
+        }
+    }
 }

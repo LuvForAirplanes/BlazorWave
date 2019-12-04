@@ -11,5 +11,6 @@ namespace BlazorWave.Data.Models.DTOs
         public string Name { get; set; }
         public byte[] Data { get; set; }
         public string Extension { get; set; }
+        public string AlbumId { get; set; }
     }
 }

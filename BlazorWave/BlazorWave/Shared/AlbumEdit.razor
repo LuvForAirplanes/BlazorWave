@@ -86,6 +86,7 @@
             </div>
         }
     </div>
+    <p>@Message</p>
 </div>
 
 @code {
@@ -97,6 +98,17 @@
         selectedFiles = files;
 
         ParseIncomingFiles();
+    }
+
+    async Task LoadFile(IFileListEntry file)
+    {
+        // So the UI updates to show progress
+        file.OnDataRead += (sender, eventArgs) => InvokeAsync(StateHasChanged);
+
+        // Just load into .NET memory to show it can be done
+        // Alternatively it could be saved to disk, or parsed in memory, or similar
+        var ms = new MemoryStream();
+        await file.Data.CopyToAsync(ms);
     }
 
     void ParseIncomingFiles()

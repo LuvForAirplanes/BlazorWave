@@ -22,6 +22,11 @@ namespace BlazorWave.Services
             this.configuration = configuration;
         }
 
+        public async Task<Album> GetAlbumAsync(string id)
+        {
+            return await context.Albums.FirstOrDefaultAsync(a => a.Id == id);
+        }
+
         public async Task<List<Album>> ListAsync()
         {
             return await context.Albums.ToListAsync();
