@@ -1,14 +1,12 @@
 ﻿@page "/nowplaying"
 @page "/nowplaying/{albumId}"
 @using BlazorWave.Data.Models;
-@inject BlazorWave.Services.AlbumsService albumsService;
+@using BlazorWave.Services;
+@inject NowPlayingPageService nowPlayingsService
 
 <AlbumViewer></AlbumViewer>
 
 @code {
-    [Parameter]
-    public Album nowPlaying { get; set; }
-
     [Parameter]
     public string albumId { get; set; }
 
@@ -16,10 +14,11 @@
     {
         if(firstRender)
         {
-            nowPlaying = await albumsService.GetAlbumAsync(albumId);
+            nowPlayingsService.NowPlaying = albumId;
+
+            //AppState.AlbumId = albumId;
 
             StateHasChanged();
-
         }
     }
 }

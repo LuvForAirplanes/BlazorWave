@@ -35,10 +35,10 @@ namespace BlazorWave
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            //services.AddDefaultIdentity<IdentityUser>()
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddRazorPages();
                 //.AddRazorPagesOptions(options =>
@@ -52,8 +52,9 @@ namespace BlazorWave
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 
             services.AddScoped<SeedDataService>();
-            services.AddScoped<AlbumsService>();
+            services.AddTransient<AlbumsService>();
             services.AddScoped<HttpClient>();
+            services.AddSingleton<NowPlayingPageService>();
 
             services.Configure<IdentityOptions>(options =>
             {

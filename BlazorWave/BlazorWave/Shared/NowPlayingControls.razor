@@ -1,0 +1,62 @@
+﻿@using BlazorWave.Data.Models;
+@using Microsoft.Extensions.DependencyInjection;
+@using Microsoft.EntityFrameworkCore;
+@inherits OwningComponentBase<Services.AlbumsService>
+@*@inject albumsService*@
+
+<div class="flex">
+    <div class="media-buttons">
+        <button class="ui icon button seek-back">
+            <i class="fast backward icon" style="padding-right: 10px !important;"></i>
+        </button>
+        <button class="ui icon button play">
+            <i class="play icon"></i>
+        </button>
+        <button class="ui icon button seek-front">
+            <i class="fast forward icon"></i>
+        </button>
+    </div>
+    <div class="media-information">
+        <h3>Praise We Sing to Thee</h3>
+        <h4>Oasis Chorale</h4>
+    </div>
+</div>
+
+@if (NowPlayingTrack.HasValue)
+{
+    <div class="music">
+        <audio src="/api/music?trackId=@NowPlayingAlbum.Tracks[NowPlayingTrack.Value].Id"></audio>
+    </div>
+}
+
+@code {
+    public Album NowPlayingAlbum { get; set; }
+    public int? NowPlayingTrack { get; set; } = null;
+
+    string albumId { get; set; }
+
+    [Parameter]
+    public string AlbumId {
+        get
+        {
+            return albumId;
+        }
+        set
+        {
+
+            albumId = value;
+            UpdateNowPlaying();
+        }
+    }
+
+    public async void UpdateNowPlaying()
+    {
+        NowPlayingAlbum = await Service.GetAlbumAsync(AlbumId);
+
+        if (NowPlayingAlbum != null)
+            if (NowPlayingAlbum.Tracks.Count > 0)
+                NowPlayingTrack = 0;
+
+        StateHasChanged();
+    }
+}

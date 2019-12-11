@@ -1,68 +1,41 @@
 ﻿@inherits LayoutComponentBase
-@using BlazorWave.Data.Models;
+@inject Services.NowPlayingPageService nowPlayingService
 
-    <div class="flex-row">
-        <div class="sidebar">
-            <div class="brand">Blazor Wave</div>
-            <NavMenu />
-        </div>
-        <div class="main">
-            <div class="top-row">
-                <div class="ui segment flex flex-row" style="justify-content: space-between;">
-                    <div class="flex">
-                        <div class="media-buttons">
-                            <button class="ui icon button seek-back">
-                                <i class="fast backward icon" style="padding-right: 10px !important;"></i>
-                            </button>
-                            <button class="ui icon button play">
-                                <i class="play icon"></i>
-                            </button>
-                            <button class="ui icon button seek-front">
-                                <i class="fast forward icon"></i>
-                            </button>
-                        </div>
-                        <div class="media-information">
-                            <h3>Praise We Sing to Thee</h3>
-                            <h4>Oasis Chorale</h4>
-                        </div>
-                    </div>
-                    <div>
-                        <LoginDisplay />
-                    </div>
+<div class="flex-row">
+    <div class="sidebar">
+        <div class="brand">Blazor Wave</div>
+        <NavMenu />
+    </div>
+    <div class="main">
+        <div class="top-row">
+            <div class="ui segment flex flex-row" style="justify-content: space-between;">
+                <NowPlayingControls AlbumId="@albumIds"></NowPlayingControls>
+                <div>
+                    <LoginDisplay />
                 </div>
             </div>
-
-            <div class="tab-content">
-                @Body
-            </div>
         </div>
-        @if (NowPlayingTrack.HasValue)
-        {
-            <div class="music">
-                <audio src="/api/upload/@nowPlayingAlbum.Tracks[NowPlayingTrack.Value].Id"></audio>
-            </div>
-        }
+
+        <div class="tab-content">
+            @Body
+        </div>
     </div>
+</div>
 
 @code {
-    public Album _nowPlayingAlbum { get; set; }
+    string albumIds { get; set; }
 
-    public Album nowPlayingAlbum {
-        get
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
         {
-            return _nowPlayingAlbum;
-        }
-        set
-        {
-            _nowPlayingAlbum = value;
-            Play();
+            nowPlayingService.PropertyChanged += OnPropertyChanged;
         }
     }
 
-    public int? NowPlayingTrack { get; set; }
-
-    void Play()
+    private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        NowPlayingTrack.Value = 0;
+        albumIds = nowPlayingService.NowPlaying;
+        StateHasChanged();
     }
 }
