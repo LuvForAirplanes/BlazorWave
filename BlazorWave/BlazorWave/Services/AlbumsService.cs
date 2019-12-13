@@ -24,7 +24,7 @@ namespace BlazorWave.Services
 
         public async Task<Album> GetAlbumAsync(string id)
         {
-            return await context.Albums.FirstOrDefaultAsync(a => a.Id == id);
+            return await context.Albums.Include(a => a.Tracks).FirstOrDefaultAsync(a => a.Id == id);
         }
 
         public async Task<List<Album>> ListAsync()

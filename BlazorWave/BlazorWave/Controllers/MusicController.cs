@@ -36,8 +36,9 @@ namespace KeyLogic.WebApp.Controllers
             }
 
             stream.Position = 0;
+            return new FileStreamResult(stream, "audio/mpeg");
+            //return new FileStreamResult(stream, "audio/mpeg") { FileDownloadName = $"music." + track.Location.Split(".").Last() };
 
-            return new FileStreamResult(stream, "audio/mpeg") { FileDownloadName = $"music." + track.Location.Split(".").Last() };
-        }
+        }    
     }
 }

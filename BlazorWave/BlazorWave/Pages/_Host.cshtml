@@ -26,7 +26,23 @@
             });
 
             return pattern.png();
-        }
+        };
+
+        window.playMusic = () => {
+            var player = document.getElementById('player');
+            if(player)
+                player.play();
+            return "";
+        };
+
+        window.togglePausedMusic = () => {
+            var player = document.getElementById('player');
+            if(player)
+                player.pause();  //just bind play/pause to some onclick events on your page
+
+                console.log(player);
+            return "";
+        };
     </script>
 
     <app>

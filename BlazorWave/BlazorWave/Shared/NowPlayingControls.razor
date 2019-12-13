@@ -2,7 +2,7 @@
 @using Microsoft.Extensions.DependencyInjection;
 @using Microsoft.EntityFrameworkCore;
 @inherits OwningComponentBase<Services.AlbumsService>
-@*@inject albumsService*@
+@inject IJSRuntime JSRuntime
 
 <div class="flex">
     <div class="media-buttons">
@@ -12,7 +12,7 @@
         <button class="ui icon button play">
             <i class="play icon"></i>
         </button>
-        <button class="ui icon button seek-front">
+        <button class="ui icon button seek-front" @onclick="(async => Pause())">
             <i class="fast forward icon"></i>
         </button>
     </div>
@@ -25,7 +25,7 @@
 @if (NowPlayingTrack.HasValue)
 {
     <div class="music">
-        <audio src="/api/music?trackId=@NowPlayingAlbum.Tracks[NowPlayingTrack.Value].Id"></audio>
+        <audio id="player" src="/api/music?trackId=@NowPlayingAlbum.Tracks[NowPlayingTrack.Value].Id" preload="auto" autobuffer></audio>
     </div>
 }
 
@@ -43,7 +43,6 @@
         }
         set
         {
-
             albumId = value;
             UpdateNowPlaying();
         }
@@ -51,12 +50,24 @@
 
     public async void UpdateNowPlaying()
     {
-        NowPlayingAlbum = await Service.GetAlbumAsync(AlbumId);
+        if(!string.IsNullOrEmpty(albumId))
+            NowPlayingAlbum = await Service.GetAlbumAsync(AlbumId);
 
         if (NowPlayingAlbum != null)
             if (NowPlayingAlbum.Tracks.Count > 0)
                 NowPlayingTrack = 0;
+    }      
 
+    protected override async Task OnAfterRenderAsync(bool firstRender) 
+    {
+        var image = await JSRuntime.InvokeAsync<string>("playMusic");
+
+        StateHasChanged();
+    }
+
+    async Task Pause() 
+    {
+        var image = await JSRuntime.InvokeAsync<string>("togglePausedMusic");
         StateHasChanged();
     }
 }

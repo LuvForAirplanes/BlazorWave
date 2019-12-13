@@ -35,7 +35,9 @@
 
     private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        albumIds = nowPlayingService.NowPlaying;
-        StateHasChanged();
+        if(albumIds != nowPlayingService.NowPlaying) {
+            albumIds = nowPlayingService.NowPlaying;
+            StateHasChanged();
+        }
     }
 }
