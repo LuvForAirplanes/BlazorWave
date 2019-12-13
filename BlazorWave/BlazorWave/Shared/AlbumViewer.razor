@@ -38,8 +38,8 @@
         <img src="/images/albumart.jpg" />
         <div>
             <div class="media-information">
-                <h3>In Endless Light</h3>
-                <h4>Oasis Chorale</h4>
+                <h3>@Album.Title</h3>
+                <h4>@Album.Artist</h4>
             </div>
             <div class="media-options">
                 <button class="ui icon button play">
@@ -56,21 +56,25 @@
         </div>
     </div>
     <div class="album-tracks">
-        <div class="track-row">
-            <div>
-                <div class="track-number">12</div>
-                <div class="track-name">Praise We Sing to Thee</div>
-            </div>
-            <div>
-                <div class="track-speed">Normal</div>
-                <div class="track-time">1:56</div>
-            </div>
-        </div>
+        @if(Album != null)
+            for (int i = 0; i < Album.Tracks.Count; i++)
+            {
+                <div class="track-row">
+                    <div>
+                        <div class="track-number">@(i + 1)</div>
+                        <div class="track-name">@Album.Tracks[i].Title</div>
+                    </div>
+                    <div>
+                        <div class="track-speed">Normal</div>
+                        <div class="track-time">1:56</div>
+                    </div>
+                </div>
+            }
     </div>
     <p class="album-copyright">©2005 Oasis Chorale</p>
 </div>
 
 @code {
-    //[Parameter]
-    //public Album Album = new Album();
+    [Parameter]
+    public Album Album { get; set; } = new Album();
 }

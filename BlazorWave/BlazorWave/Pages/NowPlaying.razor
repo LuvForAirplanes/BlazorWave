@@ -3,18 +3,27 @@
 @using BlazorWave.Data.Models;
 @using BlazorWave.Services;
 @inject NowPlayingPageService nowPlayingsService
+@inject AlbumsService albumsService
 
-<AlbumViewer></AlbumViewer>
+<AlbumViewer Album="@Album"></AlbumViewer>
 
 @code {
     [Parameter]
     public string albumId { get; set; }
 
-    protected override void OnAfterRender(bool firstRender)
+    Album Album { get; set; } = new Album();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
             nowPlayingsService.NowPlaying = albumId;
+        }
+
+        if(Album.Id != albumId)
+        {
+            Album = await albumsService.GetAlbumAsync(albumId);
+            StateHasChanged();
         }
     }
 }

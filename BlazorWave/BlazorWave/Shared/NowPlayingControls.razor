@@ -9,27 +9,29 @@
         <button class="ui icon button seek-back">
             <i class="fast backward icon" style="padding-right: 10px !important;"></i>
         </button>
-        <button class="ui icon button play">
+        <button class="ui icon button play" @onclick="(async => Pause())">
             <i class="play icon"></i>
         </button>
-        <button class="ui icon button seek-front" @onclick="(async => Pause())">
+        <button class="ui icon button seek-front">
             <i class="fast forward icon"></i>
         </button>
     </div>
     <div class="media-information">
-        <h3>Praise We Sing to Thee</h3>
-        <h4>Oasis Chorale</h4>
+        <h3>@(NowPlayingAlbum != null ? NowPlayingAlbum.Title : "")</h3>
+        <h4>@(NowPlayingAlbum != null ? NowPlayingAlbum.Artist : "")</h4>
     </div>
 </div>
 
 @if (NowPlayingTrack.HasValue)
 {
     <div class="music">
-        <audio id="player" src="/api/music?trackId=@NowPlayingAlbum.Tracks[NowPlayingTrack.Value].Id" preload="auto" autobuffer></audio>
+        <audio id="player" autoplay src="/api/music?trackId=@NowPlayingAlbum.Tracks[NowPlayingTrack.Value].Id" preload="auto" autobuffer></audio>
     </div>
 }
 
 @code {
+    public bool IsPaused { get; set; } = false;
+
     public Album NowPlayingAlbum { get; set; }
     public int? NowPlayingTrack { get; set; } = null;
 
@@ -56,18 +58,30 @@
         if (NowPlayingAlbum != null)
             if (NowPlayingAlbum.Tracks.Count > 0)
                 NowPlayingTrack = 0;
-    }      
-
-    protected override async Task OnAfterRenderAsync(bool firstRender) 
-    {
-        var image = await JSRuntime.InvokeAsync<string>("playMusic");
 
         StateHasChanged();
     }
 
-    async Task Pause() 
+    //protected override async Task OnAfterRenderAsync(bool firstRender) 
+    //{
+        //var image = await JSRuntime.InvokeAsync<string>("playMusic");
+
+        //StateHasChanged();
+    //}
+
+    public async Task Pause() 
     {
-        var image = await JSRuntime.InvokeAsync<string>("togglePausedMusic");
+        if(IsPaused)
+        {
+            await JSRuntime.InvokeAsync<string>("playMusic");
+            IsPaused = false;
+        }
+        else
+        {
+            await JSRuntime.InvokeAsync<string>("togglePausedMusic");
+            IsPaused = true;
+        }
+
         StateHasChanged();
     }
 }
