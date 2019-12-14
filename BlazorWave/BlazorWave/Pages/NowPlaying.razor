@@ -21,11 +21,12 @@
             nowPlayingsService.IsPaused = false;
         }
 
-        if(Album.Id != albumId)
-        {
-            Album = await albumsService.GetAlbumAsync(albumId);
+        if(albumId != null)
+            if(Album.Id != albumId)
+            {
+                Album = await albumsService.GetAlbumAsync(albumId);
 
-            StateHasChanged();
-        }
+                StateHasChanged();
+            }
     }
 }
