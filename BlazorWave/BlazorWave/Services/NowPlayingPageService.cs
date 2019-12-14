@@ -27,5 +27,17 @@ namespace BlazorWave.Services
                 OnPropertyChanged();
             }
         }
+
+        private int currentTrack;
+
+        public int CurrentTrack
+        {
+            get => currentTrack;
+            set
+            {
+                currentTrack = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }

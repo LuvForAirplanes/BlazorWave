@@ -9,7 +9,7 @@
     <div class="main">
         <div class="top-row">
             <div class="ui segment flex flex-row" style="justify-content: space-between;">
-                <NowPlayingControls AlbumId="@albumIds"></NowPlayingControls>
+                <NowPlayingControls AlbumId="@albumIds" NowPlayingTrack="@nowPlayingTrack"></NowPlayingControls>
                 <div>
                     <LoginDisplay />
                 </div>
@@ -25,6 +25,8 @@
 @code {
     string albumIds { get; set; }
 
+    int nowPlayingTrack { get; set; }
+
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
@@ -35,8 +37,15 @@
 
     private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if(albumIds != nowPlayingService.NowPlaying) {
+        if(albumIds != nowPlayingService.NowPlaying) 
+        {
             albumIds = nowPlayingService.NowPlaying;
+            StateHasChanged();
+        }
+
+        if(nowPlayingTrack != nowPlayingService.CurrentTrack)
+        {
+            nowPlayingTrack = nowPlayingService.CurrentTrack;
             StateHasChanged();
         }
     }

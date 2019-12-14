@@ -1,63 +1,81 @@
 ﻿@using BlazorWave.Data.Models;
 @using Microsoft.Extensions.DependencyInjection;
 @using Microsoft.EntityFrameworkCore;
-@inherits OwningComponentBase<Services.AlbumsService>
+@inject Services.AlbumsService albumsService
 @inject IJSRuntime JSRuntime
+@inject Services.NowPlayingPageService nowPlayingService
 
 <div class="flex">
     <div class="media-buttons">
         <button class="ui icon button seek-back">
-            <i class="fast backward icon" style="padding-right: 10px !important;"></i>
+            <i class="fast backward icon" style="padding-right: 10px !important;" @onclick="PreviousTrack"></i>
         </button>
         <button class="ui icon button play" @onclick="(async => Pause())">
-            <i class="play icon"></i>
+            @if(!IsPaused) 
+            {
+                <i class="pause icon"></i>
+            }
+            else
+            {
+                <i class="play icon"></i>
+            }
         </button>
         <button class="ui icon button seek-front">
-            <i class="fast forward icon"></i>
+            <i class="fast forward icon" @onclick="NextTrack"></i>
         </button>
     </div>
     <div class="media-information">
-        <h3>@(NowPlayingAlbum != null ? NowPlayingAlbum.Title : "")</h3>
-        <h4>@(NowPlayingAlbum != null ? NowPlayingAlbum.Artist : "")</h4>
+        <h3>@(NowPlayingAlbum != null ? NowPlayingAlbum.Tracks[NowPlayingTrack].Title : "")</h3>
+        <h4>@(NowPlayingAlbum != null ? NowPlayingAlbum.Title + " (" + NowPlayingAlbum.Artist + ")" : "")</h4>
     </div>
 </div>
 
-@if (NowPlayingTrack.HasValue)
-{
-    <div class="music">
-        <audio id="player" autoplay src="/api/music?trackId=@NowPlayingAlbum.Tracks[NowPlayingTrack.Value].Id" preload="auto" autobuffer></audio>
-    </div>
-}
+@if (NowPlayingAlbum != null)
+    if(NowPlayingAlbum.Tracks.Count > 0) 
+    {
+        <div class="music">
+            <audio id="player" autoplay src="/api/music?trackId=@NowPlayingAlbum.Tracks[NowPlayingTrack].Id" preload="auto" autobuffer></audio>
+        </div>   
+    }
 
 @code {
     public bool IsPaused { get; set; } = false;
 
     public Album NowPlayingAlbum { get; set; }
-    public int? NowPlayingTrack { get; set; } = null;
 
     string albumId { get; set; }
+    int nowPlayingTrack { get; set; }
 
     [Parameter]
     public string AlbumId {
-        get
-        {
-            return albumId;
-        }
+        get => albumId;
         set
         {
             albumId = value;
-            UpdateNowPlaying();
+            UpdateNowPlaying(true);
         }
     }
 
-    public async void UpdateNowPlaying()
-    {
-        if(!string.IsNullOrEmpty(albumId))
-            NowPlayingAlbum = await Service.GetAlbumAsync(AlbumId);
+    [Parameter]
+    public int NowPlayingTrack {
+        get => nowPlayingTrack;
+        set 
+        {
+            nowPlayingTrack = value;
+            UpdateNowPlaying(false);
+        }
+    }
 
-        if (NowPlayingAlbum != null)
-            if (NowPlayingAlbum.Tracks.Count > 0)
-                NowPlayingTrack = 0;
+    public async void UpdateNowPlaying(bool should)
+    {
+        if(should)
+            if(!string.IsNullOrEmpty(albumId))
+                NowPlayingAlbum = await albumsService.GetAlbumAsync(AlbumId);
+
+        //if (NowPlayingAlbum != null)
+            //if (NowPlayingAlbum.Tracks.Count > 0)
+                //nowPlayingService.CurrentTrack = NowPlayingTrack;
+        //causing Stack Overflow
 
         StateHasChanged();
     }
@@ -83,5 +101,21 @@
         }
 
         StateHasChanged();
+    }
+
+    public void NextTrack()
+    {
+        var next = nowPlayingService.CurrentTrack + 1;
+
+        if(NowPlayingAlbum.Tracks.Count >= next)
+            nowPlayingService.CurrentTrack = next;
+    } 
+
+    public void PreviousTrack()
+    {
+        var previous = nowPlayingService.CurrentTrack - 1;
+
+        if(previous != -1)
+            nowPlayingService.CurrentTrack = previous;
     }
 }
