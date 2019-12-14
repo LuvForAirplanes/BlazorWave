@@ -11,7 +11,7 @@
             <i class="fast backward icon" style="padding-right: 10px !important;" @onclick="PreviousTrack"></i>
         </button>
         <button class="ui icon button play" @onclick="(async => Pause())">
-            @if(!IsPaused) 
+            @if(!nowPlayingService.IsPaused) 
             {
                 <i class="pause icon"></i>
             }
@@ -39,8 +39,6 @@
     }
 
 @code {
-    public bool IsPaused { get; set; } = false;
-
     public Album NowPlayingAlbum { get; set; }
 
     string albumId { get; set; }
@@ -69,7 +67,7 @@
     {
         if(!string.IsNullOrEmpty(albumId))
             NowPlayingAlbum = await albumsService.GetAlbumAsync(AlbumId);
-            
+
         StateHasChanged();
     }
 
@@ -82,15 +80,15 @@
 
     public async Task Pause() 
     {
-        if(IsPaused)
+        if(nowPlayingService.IsPaused)
         {
             await JSRuntime.InvokeAsync<string>("playMusic");
-            IsPaused = false;
+            nowPlayingService.IsPaused = false;
         }
         else
         {
             await JSRuntime.InvokeAsync<string>("togglePausedMusic");
-            IsPaused = true;
+            nowPlayingService.IsPaused = true;
         }
 
         StateHasChanged();
