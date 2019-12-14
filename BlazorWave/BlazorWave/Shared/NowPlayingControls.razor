@@ -2,7 +2,6 @@
 @using Microsoft.Extensions.DependencyInjection;
 @using Microsoft.EntityFrameworkCore;
 @inject Services.AlbumsService albumsService
-@inject IJSRuntime JSRuntime
 @inject Services.NowPlayingPageService nowPlayingService
 
 <div class="flex">
@@ -10,15 +9,8 @@
         <button class="ui icon button seek-back">
             <i class="fast backward icon" style="padding-right: 10px !important;" @onclick="PreviousTrack"></i>
         </button>
-        <button class="ui icon button play" @onclick="(async => Pause())">
-            @if(!nowPlayingService.IsPaused) 
-            {
-                <i class="pause icon"></i>
-            }
-            else
-            {
-                <i class="play icon"></i>
-            }
+        <button class="ui icon button play" @onclick="Pause">     
+            <i class="@(isPaused ? "play" : "pause") icon"></i>
         </button>
         <button class="ui icon button seek-front">
             <i class="fast forward icon" @onclick="NextTrack"></i>
@@ -43,7 +35,17 @@
 
     string albumId { get; set; }
     int nowPlayingTrack { get; set; }
-
+    bool isPaused  { get; set; } = false;
+    
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if(firstRender)
+        {
+            isPaused = nowPlayingService.IsPaused;
+            nowPlayingService.PropertyChanged += OnPropertyChanged;
+        }
+    }
+    
     [Parameter]
     public string AlbumId {
         get => albumId;
@@ -63,6 +65,13 @@
         }
     }
 
+    private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        isPaused = nowPlayingService.IsPaused;
+
+        StateHasChanged();
+    }
+
     public async void UpdateNowPlaying()
     {
         if(!string.IsNullOrEmpty(albumId))
@@ -78,22 +87,6 @@
         //StateHasChanged();
     //}
 
-    public async Task Pause() 
-    {
-        if(nowPlayingService.IsPaused)
-        {
-            await JSRuntime.InvokeAsync<string>("playMusic");
-            nowPlayingService.IsPaused = false;
-        }
-        else
-        {
-            await JSRuntime.InvokeAsync<string>("togglePausedMusic");
-            nowPlayingService.IsPaused = true;
-        }
-
-        StateHasChanged();
-    }
-
     public void NextTrack()
     {
         var next = nowPlayingService.CurrentTrackIndex + 1;
@@ -108,5 +101,17 @@
 
         if(previous != -1)
             nowPlayingService.CurrentTrackIndex = previous;
+    }
+
+    public void Pause()
+    {
+        if(nowPlayingService.IsPaused)
+            nowPlayingService.IsPaused = false;
+        else
+            nowPlayingService.IsPaused = true;
+
+        isPaused = nowPlayingService.IsPaused;
+            
+        StateHasChanged();
     }
 }

@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject Services.NowPlayingPageService nowPlayingService
+@inject IJSRuntime JSRuntime
 
 <div class="flex-row">
     <div class="sidebar">
@@ -27,6 +28,8 @@
 
     int nowPlayingTrack { get; set; }
 
+    bool isPaused { get; set; } = false;
+
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
@@ -35,8 +38,26 @@
         }
     }
 
-    private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private async void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
+        if(isPaused != nowPlayingService.IsPaused)
+        {
+            if(nowPlayingService.IsPaused)
+            {
+                await JSRuntime.InvokeAsync<string>("togglePausedMusic");
+                //nowPlayingService.IsPaused = false;
+                isPaused = nowPlayingService.IsPaused;
+            }
+            else
+            {
+                await JSRuntime.InvokeAsync<string>("playMusic");
+                //nowPlayingService.IsPaused = true;
+                isPaused = nowPlayingService.IsPaused;
+            }
+            
+            StateHasChanged();
+        }   
+        
         if(albumIds != nowPlayingService.CurrentAlbumId) 
         {
             albumIds = nowPlayingService.CurrentAlbumId;

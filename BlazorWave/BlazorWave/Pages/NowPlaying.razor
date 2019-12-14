@@ -18,6 +18,7 @@
         if(firstRender)
         {
             nowPlayingsService.CurrentAlbumId = albumId;
+            nowPlayingsService.IsPaused = false;
         }
 
         if(Album.Id != albumId)

@@ -16,7 +16,16 @@ namespace BlazorWave.Services
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public bool IsPaused { get; set; } = false;
+        private bool isPaused { get; set; } = false;
+        public bool IsPaused 
+        { 
+            get => isPaused;
+            set
+            {
+                isPaused = value;
+                OnPropertyChanged();
+            } 
+        }
     
         private string currentAlbumId;
 
