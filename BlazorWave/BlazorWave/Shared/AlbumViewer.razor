@@ -51,9 +51,23 @@
                 <button class="ui icon button play">
                     <i class="share alternate icon"></i>
                 </button>
+                </div>
+                    <p style="margin-left:20px;">
+                        @(Album.Released != null && Album.Released.Year != 0001 ? "Released " + Album.Released.ToLongDateString() + " - " : "") 
+                        @if(Album.Tracks.Count > 0)
+                        {
+                            <span>@(Album.Tracks.Count.ToString() + " ")</span>
+                            @if(Album.Tracks.Count > 1)
+                            {
+                                <span>Songs</span>
+                            }
+                            else
+                            {
+                                <span>Song</span>
+                            }
+                        }
+                    </p>
             </div>
-            <p style="margin-left:20px;">Released November 15, 2005. 1 Song - 1 Minute</p>
-        </div>
     </div>
     <div class="album-tracks">
         @if(Album != null)

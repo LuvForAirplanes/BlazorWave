@@ -52,7 +52,7 @@
         set
         {
             albumId = value;
-            UpdateNowPlaying(true);
+            UpdateNowPlaying();
         }
     }
 
@@ -62,21 +62,14 @@
         set 
         {
             nowPlayingTrack = value;
-            UpdateNowPlaying(false);
         }
     }
 
-    public async void UpdateNowPlaying(bool should)
+    public async void UpdateNowPlaying()
     {
-        if(should)
-            if(!string.IsNullOrEmpty(albumId))
-                NowPlayingAlbum = await albumsService.GetAlbumAsync(AlbumId);
-
-        //if (NowPlayingAlbum != null)
-            //if (NowPlayingAlbum.Tracks.Count > 0)
-                //nowPlayingService.CurrentTrack = NowPlayingTrack;
-        //causing Stack Overflow
-
+        if(!string.IsNullOrEmpty(albumId))
+            NowPlayingAlbum = await albumsService.GetAlbumAsync(AlbumId);
+            
         StateHasChanged();
     }
 
@@ -105,17 +98,17 @@
 
     public void NextTrack()
     {
-        var next = nowPlayingService.CurrentTrack + 1;
+        var next = nowPlayingService.CurrentTrackIndex + 1;
 
-        if(NowPlayingAlbum.Tracks.Count >= next)
-            nowPlayingService.CurrentTrack = next;
+        if(NowPlayingAlbum.Tracks.Count >= next + 1)
+            nowPlayingService.CurrentTrackIndex = next;
     } 
 
     public void PreviousTrack()
     {
-        var previous = nowPlayingService.CurrentTrack - 1;
+        var previous = nowPlayingService.CurrentTrackIndex - 1;
 
         if(previous != -1)
-            nowPlayingService.CurrentTrack = previous;
+            nowPlayingService.CurrentTrackIndex = previous;
     }
 }

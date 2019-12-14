@@ -17,12 +17,13 @@
     {
         if(firstRender)
         {
-            nowPlayingsService.NowPlaying = albumId;
+            nowPlayingsService.CurrentAlbumId = albumId;
         }
 
         if(Album.Id != albumId)
         {
             Album = await albumsService.GetAlbumAsync(albumId);
+
             StateHasChanged();
         }
     }

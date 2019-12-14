@@ -37,15 +37,15 @@
 
     private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if(albumIds != nowPlayingService.NowPlaying) 
+        if(albumIds != nowPlayingService.CurrentAlbumId) 
         {
-            albumIds = nowPlayingService.NowPlaying;
+            albumIds = nowPlayingService.CurrentAlbumId;
             StateHasChanged();
         }
 
-        if(nowPlayingTrack != nowPlayingService.CurrentTrack)
+        if(nowPlayingTrack != nowPlayingService.CurrentTrackIndex)
         {
-            nowPlayingTrack = nowPlayingService.CurrentTrack;
+            nowPlayingTrack = nowPlayingService.CurrentTrackIndex;
             StateHasChanged();
         }
     }

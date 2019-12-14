@@ -16,26 +16,26 @@ namespace BlazorWave.Services
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private string nowPlaying;
+        private string currentAlbumId;
 
-        public string NowPlaying
+        public string CurrentAlbumId
         {
-            get => nowPlaying;
+            get => currentAlbumId;
             set
             {
-                nowPlaying = value;
+                currentAlbumId = value;
                 OnPropertyChanged();
             }
         }
 
-        private int currentTrack;
+        private int currentTrackIndex;
 
-        public int CurrentTrack
+        public int CurrentTrackIndex
         {
-            get => currentTrack;
+            get => currentTrackIndex;
             set
             {
-                currentTrack = value;
+                currentTrackIndex = value;
                 OnPropertyChanged();
             }
         }
